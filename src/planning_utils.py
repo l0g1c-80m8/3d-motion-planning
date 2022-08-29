@@ -1,5 +1,6 @@
 from enum import Enum
 from queue import PriorityQueue
+from bresenham import bresenham
 import numpy as np
 
 
@@ -55,6 +56,11 @@ class Action(Enum):
     EAST = (0, 1, 1)
     NORTH = (-1, 0, 1)
     SOUTH = (1, 0, 1)
+    # diagonal actions
+    NORTH_WEST = (-1, -1, 1.414)
+    NORTH_EAST = (-1, 1, 1.414)
+    SOUTH_WEST = (1, -1, 1.414)
+    SOUTH_EAST = (1, 1, 1.414)
 
     @property
     def cost(self):
@@ -73,8 +79,7 @@ def valid_actions(grid, current_node):
     n, m = grid.shape[0] - 1, grid.shape[1] - 1
     x, y = current_node
 
-    # check if the node is off the grid or
-    # it's an obstacle
+    # check if the node is off the grid or it's an obstacle
 
     if x - 1 < 0 or grid[x - 1, y] == 1:
         valid_actions.remove(Action.NORTH)
@@ -84,6 +89,16 @@ def valid_actions(grid, current_node):
         valid_actions.remove(Action.WEST)
     if y + 1 > m or grid[x, y + 1] == 1:
         valid_actions.remove(Action.EAST)
+
+    # diagonal actions
+    if x - 1 < 0 or y - 1 < 0 or grid[x - 1, y - 1] == 1:
+        valid_actions.remove(Action.NORTH_WEST)
+    if x - 1 < 0 or y + 1 > m or grid[x - 1, y + 1] == 1:
+        valid_actions.remove(Action.NORTH_EAST)
+    if x + 1 > n or y - 1 < 0 or grid[x + 1, y - 1] == 1:
+        valid_actions.remove(Action.SOUTH_WEST)
+    if x + 1 > n or y + 1 > m or grid[x + 1, y + 1] == 1:
+        valid_actions.remove(Action.SOUTH_EAST)
 
     return valid_actions
 
@@ -143,4 +158,30 @@ def a_star(grid, h, start, goal):
 
 def heuristic(position, goal_position):
     return np.linalg.norm(np.array(position) - np.array(goal_position))
+
+def relative_grid_pose(local_pose, north_offset=0, east_offset=0):
+    return int(local_pose[0]) - north_offset, int(local_pose[1]) - east_offset
+
+def prune_path(path, grid):
+    pruned_path = path.copy()
+    idx = 0
+    while idx < len(pruned_path) - 2:
+        point1 = pruned_path[idx]
+        point2 = pruned_path[idx + 1]
+        point3 = pruned_path[idx + 2]
+
+        bres_path = bresenham(int(point1[0]), int(point1[1]), int(point3[0]), int(point3[1]))
+        is_path_valid = True
+
+        for point in bres_path:
+            if grid[point] != 0:
+                is_path_valid = False
+                break
+
+        if is_path_valid:
+            pruned_path.remove(point2)
+        else:
+            idx += 1
+
+    return pruned_path
 
