@@ -1,5 +1,5 @@
 ## Project: 3D Motion Planning
-![Quad Image](./misc/enroute.png)
+![Quad Image](../assets/enroute.png)
 
 ---
 
@@ -30,7 +30,7 @@ You're reading it! Below I describe how I addressed each rubric point and where 
 These scripts contain a basic planning implementation that includes...
 
 And here's a lovely image of my results (ok this image has nothing to do with it, but it's a nice example of how to include images in your writeup!)
-![Top Down View](./misc/high_up.png)
+![Top Down View](../assets/high_up.png)
 
 Here's | A | Snappy | Table
 --- | --- | --- | ---
@@ -46,14 +46,14 @@ Here students should read the first line of the csv file, extract lat0 and lon0 
 
 
 And here is a lovely picture of our downtown San Francisco environment from above!
-![Map of SF](./misc/map.png)
+![Map of SF](../assets/map.png)
 
 #### 2. Set your current local position
 Here as long as you successfully determine your local position relative to global home you'll be all set. Explain briefly how you accomplished this in your code.
 
 
 Meanwhile, here's a picture of me flying through the trees!
-![Forest Flying](./misc/in_the_trees.png)
+![Forest Flying](../assets/in_the_trees.png)
 
 #### 3. Set grid start position from local position
 This is another step in adding flexibility to the start location. As long as it works you're good to go!
