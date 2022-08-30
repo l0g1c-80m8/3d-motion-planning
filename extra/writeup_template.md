@@ -46,7 +46,7 @@ Here students should read the first line of the csv file, extract lat0 and lon0 
 
 
 And here is a lovely picture of our downtown San Francisco environment from above!
-![Map of SF](../assets/map.png)
+![Map of SF](../assets/sf_city.png)
 
 #### 2. Set your current local position
 Here as long as you successfully determine your local position relative to global home you'll be all set. Explain briefly how you accomplished this in your code.
