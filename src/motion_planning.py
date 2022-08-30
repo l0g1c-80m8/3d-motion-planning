@@ -4,11 +4,11 @@ import msgpack
 from enum import Enum, auto
 
 import numpy as np
-import constants
+import constants as ct
 
 from random import randint
 from general_utils import read_line_from_file, parse_lat_lon_alt
-from planning_utils import a_star, heuristic, create_grid, relative_grid_pose, prune_path
+from planning_utils import a_star, heuristic, create_grid, relative_grid_pose, prune_path, get_grid_goal
 from udacidrone import Drone
 from udacidrone.connection import MavlinkConnection
 from udacidrone.messaging import MsgID
@@ -27,13 +27,14 @@ class States(Enum):
 
 class MotionPlanning(Drone):
 
-    def __init__(self, connection):
+    def __init__(self, connection, extra):
         super().__init__(connection)
 
         self.target_position = np.array([0.0, 0.0, 0.0])
         self.waypoints = []
         self.in_mission = True
         self.check_state = {}
+        self.goal_distance = extra['goal_distance']
 
         # initial state
         self.flight_state = States.MANUAL
@@ -90,7 +91,8 @@ class MotionPlanning(Drone):
         print("waypoint transition")
         self.target_position = self.waypoints.pop(0)
         print('target position', self.target_position)
-        self.cmd_position(self.target_position[0], self.target_position[1], self.target_position[2], self.target_position[3])
+        self.cmd_position(self.target_position[0], self.target_position[1], self.target_position[2],
+                          self.target_position[3])
 
     def landing_transition(self):
         self.flight_state = States.LANDING
@@ -123,7 +125,7 @@ class MotionPlanning(Drone):
         self.target_position[2] = TARGET_ALTITUDE
 
         # read lat0, lon0 from colliders into floating point values
-        lon0, lat0, alt0 = parse_lat_lon_alt(read_line_from_file(constants.COLLIDERS_FILE))
+        lon0, lat0, alt0 = parse_lat_lon_alt(read_line_from_file(ct.COLLIDERS_FILE))
 
         # set home position to (lon0, lat0, 0)
         self.set_home_position(lon0, lat0, alt0)
@@ -131,23 +133,22 @@ class MotionPlanning(Drone):
         # retrieve current global position
         # convert to current local position using global_to_local()
         current_local_position = global_to_local(self.global_position, self.global_home)
-        
+
         print('global home {0}, position {1}, local position {2}'.format(self.global_home, self.global_position,
                                                                          self.local_position))
         # Read in obstacle map
-        data = np.loadtxt(constants.COLLIDERS_FILE, delimiter=',', dtype='Float64', skiprows=2)
-        
+        data = np.loadtxt(ct.COLLIDERS_FILE, delimiter=',', dtype='Float64', skiprows=2)
+
         # Define a grid for a particular altitude and safety margin around obstacles
         grid, north_offset, east_offset = create_grid(data, TARGET_ALTITUDE, SAFETY_DISTANCE)
         print("North offset = {0}, east offset = {1}".format(north_offset, east_offset))
         # Define starting point on the grid (this is just grid center)
         # convert start position to current position
         grid_start = relative_grid_pose(current_local_position, north_offset, east_offset)
-        
+
         # Set goal as some arbitrary position on the grid
         # set goal as latitude / longitude position and convert
-        # grid_goal = relative_grid_pose((np.random.choice(data[:, 0], size=1)[0], np.random.choice(data[:, 1], size=1)[0]), north_offset, east_offset)
-        grid_goal = (grid_start[0] + 15, grid_start[1] + 25)
+        grid_goal = get_grid_goal(data, grid_start, self.goal_distance, north_offset, east_offset)
 
         # Run A* to find a path from start to goal
         # add diagonal motions with a cost of sqrt(2) to your A* implementation
@@ -182,10 +183,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=5760, help='Port number')
     parser.add_argument('--host', type=str, default='127.0.0.1', help="host address, i.e. '127.0.0.1'")
+    parser.add_argument('--goal_distance', type=str, default='nearby', help="nearby(short computation), far (long "
+                                                                            "computation) or random")
     args = parser.parse_args()
 
     conn = MavlinkConnection('tcp:{0}:{1}'.format(args.host, args.port), timeout=60)
-    drone = MotionPlanning(conn)
+    drone = MotionPlanning(conn, {'goal_distance': args.goal_distance})
     time.sleep(1)
 
     drone.start()

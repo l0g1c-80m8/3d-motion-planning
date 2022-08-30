@@ -2,6 +2,7 @@ from enum import Enum
 from queue import PriorityQueue
 from bresenham import bresenham
 import numpy as np
+import constants as ct
 
 
 def create_grid(data, drone_altitude, safety_distance):
@@ -32,12 +33,12 @@ def create_grid(data, drone_altitude, safety_distance):
         north, east, alt, d_north, d_east, d_alt = data[i, :]
         if alt + d_alt + safety_distance > drone_altitude:
             obstacle = [
-                int(np.clip(north - d_north - safety_distance - north_min, 0, north_size-1)),
-                int(np.clip(north + d_north + safety_distance - north_min, 0, north_size-1)),
-                int(np.clip(east - d_east - safety_distance - east_min, 0, east_size-1)),
-                int(np.clip(east + d_east + safety_distance - east_min, 0, east_size-1)),
+                int(np.clip(north - d_north - safety_distance - north_min, 0, north_size - 1)),
+                int(np.clip(north + d_north + safety_distance - north_min, 0, north_size - 1)),
+                int(np.clip(east - d_east - safety_distance - east_min, 0, east_size - 1)),
+                int(np.clip(east + d_east + safety_distance - east_min, 0, east_size - 1)),
             ]
-            grid[obstacle[0]:obstacle[1]+1, obstacle[2]:obstacle[3]+1] = 1
+            grid[obstacle[0]:obstacle[1] + 1, obstacle[2]:obstacle[3] + 1] = 1
 
     return grid, int(north_min), int(east_min)
 
@@ -104,7 +105,6 @@ def valid_actions(grid, current_node):
 
 
 def a_star(grid, h, start, goal):
-
     path = []
     path_cost = 0
     queue = PriorityQueue()
@@ -113,16 +113,16 @@ def a_star(grid, h, start, goal):
 
     branch = {}
     found = False
-    
+
     while not queue.empty():
         item = queue.get()
         current_node = item[1]
         if current_node == start:
             current_cost = 0.0
-        else:              
+        else:
             current_cost = branch[current_node][0]
-            
-        if current_node == goal:        
+
+        if current_node == goal:
             print('Found a path.')
             found = True
             break
@@ -133,12 +133,12 @@ def a_star(grid, h, start, goal):
                 next_node = (current_node[0] + da[0], current_node[1] + da[1])
                 branch_cost = current_cost + action.cost
                 queue_cost = branch_cost + h(next_node, goal)
-                
-                if next_node not in visited:                
-                    visited.add(next_node)               
+
+                if next_node not in visited:
+                    visited.add(next_node)
                     branch[next_node] = (branch_cost, current_node, action)
                     queue.put((queue_cost, next_node))
-             
+
     if found:
         # retrace steps
         n = goal
@@ -151,16 +151,17 @@ def a_star(grid, h, start, goal):
     else:
         print('**********************')
         print('Failed to find a path!')
-        print('**********************') 
+        print('**********************')
     return path[::-1], path_cost
-
 
 
 def heuristic(position, goal_position):
     return np.linalg.norm(np.array(position) - np.array(goal_position))
 
+
 def relative_grid_pose(local_pose, north_offset=0, east_offset=0):
     return int(local_pose[0]) - north_offset, int(local_pose[1]) - east_offset
+
 
 def prune_path(path, grid):
     pruned_path = path.copy()
@@ -185,3 +186,14 @@ def prune_path(path, grid):
 
     return pruned_path
 
+
+def get_grid_goal(data, grid_start, goal_distance, north_offset, east_offset):
+    if goal_distance == ct.GOAL_DISTANCE['NEARBY']:
+        return grid_start[0] + 15, grid_start[1] + 25
+    elif goal_distance == ct.GOAL_DISTANCE['FAR']:
+        return grid_start[0] + 100, grid_start[1] + 50
+    elif goal_distance == ct.GOAL_DISTANCE['RANDOM']:
+        return relative_grid_pose((np.random.choice(data[:, 0], size=1)[0], np.random.choice(data[:, 1], size=1)[0]),
+                                  north_offset, east_offset)
+    else:
+        return grid_start[0] + 1, grid_start[1] + 1
