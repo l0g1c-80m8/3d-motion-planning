@@ -6,7 +6,7 @@ from enum import Enum, auto
 import numpy as np
 import constants as ct
 
-from random import randint
+
 from general_utils import read_line_from_file, parse_lat_lon_alt
 from planning_utils import a_star, heuristic, create_grid, relative_grid_pose, prune_path, get_grid_goal
 from udacidrone import Drone
@@ -187,7 +187,7 @@ if __name__ == "__main__":
                                                                             "computation) or random")
     args = parser.parse_args()
 
-    conn = MavlinkConnection('tcp:{0}:{1}'.format(args.host, args.port), timeout=60)
+    conn = MavlinkConnection('tcp:{0}:{1}'.format(args.host, args.port), timeout=600)
     drone = MotionPlanning(conn, {'goal_distance': args.goal_distance})
     time.sleep(1)
 

@@ -191,9 +191,9 @@ def get_grid_goal(data, grid_start, goal_distance, north_offset, east_offset):
     if goal_distance == ct.GOAL_DISTANCE['NEARBY']:
         return grid_start[0] + 15, grid_start[1] + 25
     elif goal_distance == ct.GOAL_DISTANCE['FAR']:
-        return grid_start[0] + 100, grid_start[1] + 50
-    elif goal_distance == ct.GOAL_DISTANCE['RANDOM']:
+        return grid_start[0] + 420, grid_start[1] - 250
+    elif goal_distance == ct.GOAL_DISTANCE['MEDIUM']:
+        return grid_start[0] + 120, grid_start[1] - 100
+    else:
         return relative_grid_pose((np.random.choice(data[:, 0], size=1)[0], np.random.choice(data[:, 1], size=1)[0]),
                                   north_offset, east_offset)
-    else:
-        return grid_start[0] + 1, grid_start[1] + 1
