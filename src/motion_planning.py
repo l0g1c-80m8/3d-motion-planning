@@ -163,6 +163,7 @@ class MotionPlanning(Drone):
 
         # Convert path to waypoints
         waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in pruned_path]
+        print(waypoints)
         # Set self.waypoints
         self.waypoints = waypoints
         # send waypoints to sim (this is just for visualization of waypoints)
