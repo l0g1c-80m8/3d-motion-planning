@@ -65,4 +65,4 @@ Key:
 ![Medium distance goal](./assets/waypoints_long.png)
 
 ### Demo simulation run
-![Demo simulation run gif](./demo_sim.gif)
+![Demo simulation run gif](./assets/demo_sim_run.gif)
