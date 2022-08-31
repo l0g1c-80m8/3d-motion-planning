@@ -34,7 +34,8 @@ class MotionPlanning(Drone):
         self.waypoints = []
         self.in_mission = True
         self.check_state = {}
-        self.goal_distance = extra['goal_distance']
+        self.goal_lat = float(extra['goal_lat'])
+        self.goal_lon = float(extra['goal_lon'])
 
         # initial state
         self.flight_state = States.MANUAL
@@ -148,7 +149,8 @@ class MotionPlanning(Drone):
 
         # Set goal as some arbitrary position on the grid
         # set goal as latitude / longitude position and convert
-        grid_goal = get_grid_goal(data, grid_start, self.goal_distance, north_offset, east_offset)
+        goal_local_position = global_to_local((self.goal_lon, self.goal_lat, 0.0), self.global_home)
+        grid_goal = relative_grid_pose(goal_local_position, north_offset, east_offset)
 
         # Run A* to find a path from start to goal
         # add diagonal motions with a cost of sqrt(2) to your A* implementation
@@ -183,12 +185,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=5760, help='Port number')
     parser.add_argument('--host', type=str, default='127.0.0.1', help="host address, i.e. '127.0.0.1'")
-    parser.add_argument('--goal_distance', type=str, default='nearby', help="nearby(short computation), far (long "
-                                                                            "computation) or random")
+    parser.add_argument('--goal_lat', type=str, default='37.793580', help="goal latitude")
+    parser.add_argument('--goal_lon', type=str, default='-122.399450', help="goal longitude")
     args = parser.parse_args()
 
     conn = MavlinkConnection('tcp:{0}:{1}'.format(args.host, args.port), timeout=600)
-    drone = MotionPlanning(conn, {'goal_distance': args.goal_distance})
+    drone = MotionPlanning(conn, {'goal_lat': args.goal_lat, 'goal_lon': args.goal_lon})
     time.sleep(1)
 
     drone.start()
