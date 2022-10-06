@@ -66,3 +66,10 @@ Key:
 
 ### Demo simulation run
 ![Demo simulation run gif](./assets/demo_sim_run.gif)
+
+
+## Tasks
+
+- [x] Implement with A*.
+- [ ] Implement with D* Lite.
+- [ ] Implement with RTT*.
