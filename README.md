@@ -73,3 +73,4 @@ Key:
 - [x] Implement with A*.
 - [ ] Implement with D* Lite.
 - [ ] Implement with RTT*.
+- [ ] Implement with Probabilistic Roadmap.
