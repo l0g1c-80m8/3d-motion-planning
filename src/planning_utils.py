@@ -127,7 +127,7 @@ def rtt(grid, start, goal, delta, max_points=10000):
     edges = []
 
     while len(nodes) < max_points:
-        print(len(nodes))
+        # print(len(nodes))
         rand_conf = get_random_point_in_free_space(free_space)
         nearest_conf_index = get_nearest_in_tree(nodes, rand_conf)
         new_conf = get_new_node_on_grid(rand_conf, nodes[nearest_conf_index], delta)

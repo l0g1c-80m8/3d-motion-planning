@@ -4,11 +4,12 @@ import msgpack
 from enum import Enum, auto
 
 import numpy as np
+import networkx as nx
 import constants as ct
 
 
 from general_utils import read_line_from_file, parse_lat_lon_alt
-from planning_utils import a_star, heuristic, create_grid, relative_grid_pose, prune_path, get_grid_goal
+from planning_utils import rtt, create_grid, prune_path, relative_grid_pose
 from udacidrone import Drone
 from udacidrone.connection import MavlinkConnection
 from udacidrone.messaging import MsgID
@@ -122,6 +123,7 @@ class MotionPlanning(Drone):
         print("Searching for a path ...")
         TARGET_ALTITUDE = 5
         SAFETY_DISTANCE = 5
+        delta = 10
 
         self.target_position[2] = TARGET_ALTITUDE
 
@@ -156,10 +158,19 @@ class MotionPlanning(Drone):
         # add diagonal motions with a cost of sqrt(2) to your A* implementation
         # or move to a different search space such as a graph (not done here)
         print('Local Start and Goal: ', grid_start, grid_goal)
-        path, _ = a_star(grid, heuristic, grid_start, grid_goal)
+        grid, north_offset, east_offset = create_grid(data, TARGET_ALTITUDE, SAFETY_DISTANCE)
+        nodes, edges = rtt(grid, grid_start, grid_goal, delta)
+
+        G = nx.Graph()
+        G.add_nodes_from([i for i in range(len(nodes))])
+        G.add_edges_from(edges)
+        source_index, target_index = 0, len(nodes) - 1
+        path_indices = nx.bidirectional_shortest_path(G, source_index, target_index)
+        path_with_coordinates = [nodes[path] for path in path_indices]
+
         # prune path to minimize number of waypoints
         # (if you're feeling ambitious): Try a different approach altogether!
-        pruned_path = prune_path(path, grid)
+        pruned_path = prune_path(path_with_coordinates, grid)
 
         # Convert path to waypoints
         waypoints = [[p[0] + north_offset, p[1] + east_offset, TARGET_ALTITUDE, 0] for p in pruned_path]
