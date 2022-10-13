@@ -58,11 +58,11 @@ Key:
 - Red points are waypoints after pruning by Bresenham's ray-tracing algorithm.
 - Black lines make up the paths connecting the waypoints.
 
-#### Planning a medium distance route:
-![Medium distance goal](./assets/waypoints_medium.png)
+#### Planning with RRT:
+![Planning with RRT](./assets/rtt-2.png)
 
-#### Planning a long distance route:
-![Medium distance goal](./assets/waypoints_long.png)
+#### Planning with A*:
+![Planning with A*](./assets/waypoints_long.png)
 
 ### Demo simulation run
 ![Demo simulation run gif](./assets/demo_sim_run.gif)
