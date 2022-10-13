@@ -59,7 +59,7 @@ Key:
 - Black lines make up the paths connecting the waypoints.
 
 #### Planning with RRT:
-![Planning with RRT](./assets/rtt-2.png)
+![Planning with RRT](https://github.com/l0g1c-80m8/3d-motion-planning/blob/implement-rrt/assets/rtt-2.png)
 
 #### Planning with A*:
 ![Planning with A*](./assets/waypoints_long.png)
