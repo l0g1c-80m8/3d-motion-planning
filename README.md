@@ -45,11 +45,11 @@ Use `planning_utils.relative_grid_pose()` to offset the starting position in the
 #### 4. Set grid goal position from geodetic coords
 Use `planning_utils.get_grid_goal()` to get a far, medium or nearby value in the grid.
 
-#### 5. A* algorithm
-Implement the A* algorithm to have up, down, left and right motions to the next grid cells with a cost of one and diagonal up-right, diagonal up-left, diagonal down-right, diagonal down-left motions with a cost of `sqrt(2)`.
+#### 5. Search algorithm
+Implement the search algorithm to model produce a naive path on the grid cells.
 
 #### 6. Cull waypoints 
-Use the `planning_utils.prune_path()` method implementing the Bresenham ray-tracing algorithm to remove unnecessary waypoints.
+Use the `planning_utils.prune_path()` method implementing the Bresenham ray-tracing algorithm to remove unnecessary waypoints from the naive path.
 
 ### Results
 Key:
