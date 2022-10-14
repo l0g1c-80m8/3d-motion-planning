@@ -70,8 +70,8 @@ Key:
 
 ## Tasks
 
-- [x] Implement with A*.
+- [x] Implement with ![A*](https://github.com/l0g1c-80m8/3d-motion-planning).
 - [ ] Implement with D* Lite.
-- [x] Implement with RTT.
+- [x] Implement with ![RTT](https://github.com/l0g1c-80m8/3d-motion-planning/tree/implement-rrt).
 - [ ] Implement with Probabilistic Roadmap.
-- [ ] Implement as a Markov Decision Process Problem.
+- [x] Implement as a ![MDP](https://github.com/l0g1c-80m8/3d-motion-planning/tree/implement-mdp-model) Problem.
