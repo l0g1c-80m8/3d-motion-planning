@@ -74,4 +74,4 @@ Key:
 - [ ] Implement with D* Lite.
 - [x] Implement with ![RTT](https://github.com/l0g1c-80m8/3d-motion-planning/tree/implement-rrt).
 - [ ] Implement with Probabilistic Roadmap.
-- [x] Implement as a ![MDP](https://github.com/l0g1c-80m8/3d-motion-planning/tree/implement-mdp-model) Problem.
+- [x] Implement as an ![MDP](https://github.com/l0g1c-80m8/3d-motion-planning/tree/implement-mdp-model) Problem.
